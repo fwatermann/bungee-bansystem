@@ -1,0 +1,16 @@
+chat.prefix.mute=<color=yellow>[<color=red>Mute<color=yellow>]
+chat.prefix.ban=<color=yellow>[<color=red>Ban<color=yellow>]
+chat.message.muted=<color=red>Your message was not sent. Reason for your mute: <color=yellow>%s
+chat.message.muted.duration=<color=red>Your mute will expire in <color=yellow>%2d:%2d:%2d
+
+### BAN ###
+login.ban.duration.days=<color=yellow>%02dd
+login.ban.duration.hours=<color=yellow>%02dh
+login.ban.duration.minutes=<color=yellow>%02dm
+login.ban.duration.seconds=<color=yellow>%02ds
+login.ban.duration.permanent=permanent
+login.ban.spacer=<strikethrough=true;color=red;bold=true>                        <reset=true>
+login.ban.headline=<color=red>You are banned from this server!
+login.ban.reason=<color=dark_aqua>Reason<color=gray>: <color=yellow>%s
+login.ban.duration=<color=dark_aqua>Duration<color=gray>:
+login.ban.banId=<color=dark_gray>Id: %s

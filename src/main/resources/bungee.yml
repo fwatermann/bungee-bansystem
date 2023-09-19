@@ -1,0 +1,5 @@
+name: BanSystem
+version: '${version}'
+main: de.fwatermann.bungeecord.bansystem.BanSystem
+author: Finn Watermann
+description: BanSystem
