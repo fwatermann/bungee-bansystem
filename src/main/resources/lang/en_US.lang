@@ -3,7 +3,22 @@ chat.prefix.ban=<color=yellow>[<color=red>Ban<color=yellow>]
 chat.message.muted=<color=red>Your message was not sent. Reason for your mute: <color=yellow>%s
 chat.message.muted.duration=<color=red>Your mute will expire in <color=yellow>%2d:%2d:%2d
 
-### BAN ###
+### General ###
+error.command_usage=<color=red>Wrong arguments. Use: <color=yellow>%s
+error.player_not_found=<color=red>Player <color=yellow>%s <color=red>could not be found.
+error.permissions=<color=red>You do not have the required permissions to execute this command.
+
+### Kick ###
+kick.command.usage=<color=red>Wrong arguments. Use <color=yellow>/kick \\<player\\> [reason]
+kick.command.success=<color=gray>Player <color=red>%s <color=gray>was kicked from the server.
+
+kick.player.headline=<color=red>You were kicked from the server.
+kick.player.reason=<color=dark_aqua>Reason<color=gray>: <color=yellow>%s
+kick.player.spacer=<strikethrough=true;color=red;bold=true>                        <reset=true>
+
+kick.default.reason=No specific reason was given.
+
+### Ban ###
 login.ban.duration.days=<color=yellow>%02dd
 login.ban.duration.hours=<color=yellow>%02dh
 login.ban.duration.minutes=<color=yellow>%02dm

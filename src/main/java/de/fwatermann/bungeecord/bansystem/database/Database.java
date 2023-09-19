@@ -12,7 +12,8 @@ public class Database {
      * @return BanStatus object
      */
     public static BanStatus getBanStatus(UUID uuid) {
-        return new BanStatus(true, "illegal client modification", 0L, 1726263860000L, "a1b2c3d4e5");
+        return new BanStatus(
+                false, "illegal client modification", 0L, 1726263860000L, "a1b2c3d4e5");
     }
 
     /**

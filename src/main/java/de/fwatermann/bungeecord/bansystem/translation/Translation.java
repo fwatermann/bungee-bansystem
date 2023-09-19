@@ -4,9 +4,9 @@ import de.fwatermann.bungeecord.bansystem.BanSystem;
 import de.fwatermann.bungeecord.bansystem.util.FileUtils;
 
 import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
-import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 import java.io.File;
@@ -23,7 +23,8 @@ import java.util.regex.Pattern;
 public class Translation {
 
     private static final Logger logger = BanSystem.getInstance().getLogger();
-    private static final Pattern attributeRegex = Pattern.compile("<((.*?=.*?)(;.*?=.*?)*?)>(.*?)(?=<|$)", Pattern.MULTILINE);
+    private static final Pattern attributeRegex =
+            Pattern.compile("<((.*?=.*?)(;.*?=.*?)*?)>(.*?)(?=<|$)", Pattern.MULTILINE);
     private static final String DEFAULT_LANGKEY = "en_US";
     private static final HashMap<String, Map<String, String>> translations = new HashMap<>();
     private static boolean dataDirInitialized = false;
@@ -55,18 +56,28 @@ public class Translation {
     }
 
     public static String text(String messageId, Locale locale, Object... args) {
-        if (locale == null) {
-            locale = Locale.US;
-        }
-        return String.format(getTranslation(messageId, locale), args);
+        return String.format(getTranslation(messageId, langKey(locale)), args);
+    }
+
+    public static String text(String messageId, CommandSender sender, Object... args) {
+        return text(messageId, sender instanceof ProxiedPlayer pp ? pp.getLocale() : null, args);
     }
 
     public static String text(String messageId, ProxiedPlayer player, Object... args) {
         return text(messageId, player.getLocale(), args);
     }
 
+    public static BaseComponent[] component(
+            String messageId, CommandSender sender, Object... args) {
+        return component(
+                messageId, sender instanceof ProxiedPlayer pp ? pp.getLocale() : null, args);
+    }
+
     public static BaseComponent[] component(String messageId, Locale locale, Object... args) {
         String rawText = text(messageId, locale, args);
+
+        // Escape < and > to prevent them from being interpreted as attributes
+        rawText = rawText.replace("\\<", "&lt;").replace("\\>", "&gt;");
 
         Matcher matcher = attributeRegex.matcher(rawText);
 
@@ -75,6 +86,10 @@ public class Translation {
         while (matcher.find()) {
             String[] attributes = matcher.group(1).split(";");
             String text = matcher.group(4);
+
+            // Unescape < and > to prevent them from being interpreted as attributes
+            text = text.replace("&lt;", "<").replace("&gt;", ">");
+
             builder.append(text);
             Arrays.stream(attributes)
                     .map(s -> s.split("="))
@@ -84,9 +99,12 @@ public class Translation {
                                     case "color" -> builder.color(ChatColor.of(s[1]));
                                     case "bold" -> builder.bold(Boolean.parseBoolean(s[1]));
                                     case "italic" -> builder.italic(Boolean.parseBoolean(s[1]));
-                                    case "underlined" -> builder.underlined(Boolean.parseBoolean(s[1]));
-                                    case "strikethrough" -> builder.strikethrough(Boolean.parseBoolean(s[1]));
-                                    case "obfuscated" -> builder.obfuscated(Boolean.parseBoolean(s[1]));
+                                    case "underlined" -> builder.underlined(
+                                            Boolean.parseBoolean(s[1]));
+                                    case "strikethrough" -> builder.strikethrough(
+                                            Boolean.parseBoolean(s[1]));
+                                    case "obfuscated" -> builder.obfuscated(
+                                            Boolean.parseBoolean(s[1]));
                                     case "insertion" -> builder.insertion(s[1]);
                                     case "reset" -> {
                                         builder.reset();
@@ -104,7 +122,7 @@ public class Translation {
         return builder.create();
     }
 
-    private static String getTranslation(String messageId, Locale locale) {
+    private static String getTranslation(String messageId, String langKey) {
         if (!dataDirInitialized) {
             return "Missing translation <"
                     + messageId
@@ -113,8 +131,6 @@ public class Translation {
                     + " (Default file could not be initialized!)";
         }
 
-        String langKey =
-                locale.getLanguage().toLowerCase() + "_" + locale.getCountry().toUpperCase();
         if (!translations.containsKey(langKey)) {
             loadTranslation(langKey);
         }
@@ -127,7 +143,7 @@ public class Translation {
                         "Could not find translation for language key " + langKey + "!");
                 return "Missing translation <" + messageId + ">-" + langKey + "!";
             }
-            return getTranslation(messageId, Locale.forLanguageTag(DEFAULT_LANGKEY));
+            return getTranslation(messageId, DEFAULT_LANGKEY);
         }
         return translations
                 .get(langKey)
@@ -161,5 +177,10 @@ public class Translation {
             throw new RuntimeException(e);
         }
         translations.put(langKey, translation);
+    }
+
+    private static String langKey(Locale locale) {
+        if (locale == null) return DEFAULT_LANGKEY;
+        return locale.getLanguage().toLowerCase() + "_" + locale.getCountry().toUpperCase();
     }
 }
