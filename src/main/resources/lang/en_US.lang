@@ -10,13 +10,18 @@ error.permissions=<color=red>You do not have the required permissions to execute
 
 ### Kick ###
 kick.command.usage=<color=red>Wrong arguments. Use <color=yellow>/kick \\<player\\> [reason]
-kick.command.success=<color=gray>Player <color=red>%s <color=gray>was kicked from the server.
+kick.command.success=<color=gray>Player <color=red>%s <color=gray>was kicked from the server <color=green>successfully<color=gray>.
 
 kick.player.headline=<color=red>You were kicked from the server.
 kick.player.reason=<color=dark_aqua>Reason<color=gray>: <color=yellow>%s
 kick.player.spacer=<strikethrough=true;color=red;bold=true>                        <reset=true>
 
 kick.default.reason=No specific reason was given.
+
+### Kickall ###
+
+kickall.command.success=<color=red>All players <color=gray>were kicked from the server <color=green>successfully<color=gray>.
+kickall.default.reason=All players were kicked for no specific reason.
 
 ### Ban ###
 login.ban.duration.days=<color=yellow>%02dd

@@ -16,4 +16,6 @@ public class Translations {
     public static final String KICK_PLAYER_HEADLINE = "kick.player.headline";
     public static final String KICK_PLAYER_REASON = "kick.player.reason";
     public static final String KICK_PLAYER_SPACER = "kick.player.spacer";
+    public static final String KICKALL_SUCCESS = "kickall.command.success";
+    public static final String KICKALL_DEFAULT_REASON = "kickall.default.reason";
 }
