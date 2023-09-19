@@ -58,5 +58,6 @@ spotless {
 }
 
 jar {
+    // This is the target directory for the jar file.
     destinationDirectory.set(file("V:\\minecraft\\BungeeCord\\plugins"))
 }
