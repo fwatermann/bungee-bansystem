@@ -50,36 +50,35 @@ public class CommandKickServer extends Command {
             return;
         }
 
-        if (args.length == 1) {
-            String serverName = args[0];
-            if (serverName.equalsIgnoreCase("this")) {
-                if (!(sender instanceof ProxiedPlayer pp)) {
-                    sender.sendMessage(
-                            Translation.component(
-                                    Translations.KICKSERVER_NOT_A_PLAYER, sender, serverName));
-                    return;
-                }
-                ServerInfo server = pp.getServer().getInfo();
-                if (server == null) {
-                    sender.sendMessage(
-                            Translation.component(
-                                    Translations.KICKSERVER_SERVER_NOT_FOUND, sender, serverName));
-                    return;
-                }
-                kickAllFromServer(server, null);
+        ServerInfo server;
+        if (args[0].equalsIgnoreCase("this")) {
+            if (!(sender instanceof ProxiedPlayer pp)) {
+                sender.sendMessage(
+                        Translation.component(Translations.KICKSERVER_NOT_A_PLAYER, sender));
+                return;
             }
+            server = pp.getServer().getInfo();
+        } else {
+            server = ProxyServer.getInstance().getServerInfo(args[0]);
+        }
+        if (server == null) {
+            sender.sendMessage(
+                    Translation.component(
+                            Translations.KICKSERVER_SERVER_NOT_FOUND, sender, args[0]));
+            return;
+        }
+
+        if (args.length == 1) {
+            kickAllFromServer(server, null);
+            sender.sendMessage(
+                    Translation.component(
+                            Translations.KICKSERVER_SUCCESS, sender, server.getName()));
             return;
         }
 
         String reason = String.join(" ", Arrays.copyOfRange(args, 1, args.length));
-        String serverName = args[0];
-        ServerInfo server = ProxyServer.getInstance().getServerInfo(serverName);
-        if (server == null) {
-            sender.sendMessage(
-                    Translation.component(
-                            Translations.KICKSERVER_SERVER_NOT_FOUND, sender, serverName));
-            return;
-        }
         kickAllFromServer(server, reason);
+        sender.sendMessage(
+                Translation.component(Translations.KICKSERVER_SUCCESS, sender, server.getName()));
     }
 }
