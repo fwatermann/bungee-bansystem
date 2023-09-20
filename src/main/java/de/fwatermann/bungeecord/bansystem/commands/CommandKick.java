@@ -27,7 +27,7 @@ public class CommandKick extends Command {
         }
 
         if (args.length == 0) {
-            sender.sendMessage(Translation.component(Translations.COMMAND_KICK_USAGE, sender));
+            sender.sendMessage(Translation.component(Translations.KICK_COMMAND_USAGE, sender));
             return;
         }
 

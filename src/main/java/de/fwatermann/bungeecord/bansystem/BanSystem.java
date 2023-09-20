@@ -2,6 +2,7 @@ package de.fwatermann.bungeecord.bansystem;
 
 import de.fwatermann.bungeecord.bansystem.commands.CommandKick;
 import de.fwatermann.bungeecord.bansystem.commands.CommandKickAll;
+import de.fwatermann.bungeecord.bansystem.commands.CommandKickServer;
 import de.fwatermann.bungeecord.bansystem.listener.PlayerChatListener;
 import de.fwatermann.bungeecord.bansystem.listener.PlayerLoginListener;
 
@@ -34,6 +35,7 @@ public final class BanSystem extends Plugin {
 
         pluginManager.registerCommand(this, new CommandKick());
         pluginManager.registerCommand(this, new CommandKickAll());
+        pluginManager.registerCommand(this, new CommandKickServer());
     }
 
     @Override
