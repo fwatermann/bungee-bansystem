@@ -11,6 +11,7 @@ import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 public class CommandKickServer extends Command {
@@ -19,27 +20,11 @@ public class CommandKickServer extends Command {
         super("kickserver");
     }
 
-    private static void kickAllFromServer(ServerInfo server, String reason) {
-
-        server.getPlayers()
-                .forEach(
-                        pp -> {
-                            pp.disconnect(
-                                    MessageGenerator.kickMessage(
-                                            pp,
-                                            reason == null
-                                                    ? Translation.text(
-                                                            Translations.KICKSERVER_DEFAULT_REASON,
-                                                            pp)
-                                                    : reason));
-                        });
-    }
-
     @Override
     public void execute(CommandSender sender, String[] args) {
 
-        if (!sender.hasPermission(Permissions.KICK_SERVER)
-                || !sender.hasPermission(Permissions.KICK)) {
+        if (!sender.hasPermission(Permissions.COMMAND_KICK_SERVER)
+                || !sender.hasPermission(Permissions.COMMAND_KICK)) {
             sender.sendMessage(Translation.component(Translations.NO_PERMISSIONS, sender));
             return;
         }
@@ -54,7 +39,8 @@ public class CommandKickServer extends Command {
         if (args[0].equalsIgnoreCase("this")) {
             if (!(sender instanceof ProxiedPlayer pp)) {
                 sender.sendMessage(
-                        Translation.component(Translations.KICKSERVER_NOT_A_PLAYER, sender));
+                        Translation.component(
+                                Translations.KICKSERVER_COMMAND_ERROR_NOT_A_PLAYER, sender));
                 return;
             }
             server = pp.getServer().getInfo();
@@ -64,21 +50,40 @@ public class CommandKickServer extends Command {
         if (server == null) {
             sender.sendMessage(
                     Translation.component(
-                            Translations.KICKSERVER_SERVER_NOT_FOUND, sender, args[0]));
+                            Translations.KICKSERVER_COMMAND_ERROR_SERVER_NOT_FOUND,
+                            sender,
+                            args[0]));
             return;
         }
 
-        if (args.length == 1) {
-            kickAllFromServer(server, null);
+        String reason = null;
+        if (args.length > 1) {
+            reason = String.join(" ", Arrays.copyOfRange(args, 1, args.length));
+        }
+
+        boolean kickStaff = sender.hasPermission(Permissions.KICK_STAFF);
+        ArrayList<String> staff = new ArrayList<>();
+        for (ProxiedPlayer pp : ProxyServer.getInstance().getPlayers()) {
+            if (!kickStaff && pp.hasPermission(Permissions.STAFF)) {
+                staff.add(pp.getName());
+                continue;
+            }
+            pp.disconnect(
+                    MessageGenerator.kickMessage(
+                            pp,
+                            reason == null
+                                    ? Translation.text(Translations.KICKSERVER_DEFAULT_REASON, pp)
+                                    : reason));
+        }
+        if (staff.size() > 0) {
             sender.sendMessage(
                     Translation.component(
-                            Translations.KICKSERVER_SUCCESS, sender, server.getName()));
-            return;
+                            Translations.KICKSERVER_COMMAND_NOTICE_SKIP_STAFF,
+                            sender,
+                            String.join(", ", staff)));
         }
-
-        String reason = String.join(" ", Arrays.copyOfRange(args, 1, args.length));
-        kickAllFromServer(server, reason);
         sender.sendMessage(
-                Translation.component(Translations.KICKSERVER_SUCCESS, sender, server.getName()));
+                Translation.component(
+                        Translations.KICKSERVER_COMMAND_SUCCESS, sender, server.getName()));
     }
 }

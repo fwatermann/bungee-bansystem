@@ -9,9 +9,15 @@ error.command_usage=<color=red>Wrong arguments. Use: <color=yellow>%s
 error.player_not_found=<color=red>Player <color=yellow>%s <color=red>could not be found.
 error.permissions=<color=red>You do not have the required permissions to execute this command.
 
+prefix.ban=<color=dark_red>[<color=red>BAN<color=dark_red>] <color=gray>
+prefix.mute=<color=red>[<color=yellow>MUTE<color=red>] <color=gray>
+prefix.kick=<color=gold>[<color=yellow>KICK<color=gold>] <color=gray>
+
 ### kick ###
 kick.command.usage=<color=red>Wrong arguments. Use <color=yellow>/kick \\<player\\> [reason]
 kick.command.success=<color=gray>Player <color=red>%s <color=gray>was kicked from the server <color=green>successfully<color=gray>.
+
+kick.command.error.staff=<color=red>You do not have permissions to kick other staff members.
 
 kick.player.headline=<color=red>You were kicked from the server.
 kick.player.reason=<color=dark_aqua>Reason<color=gray>: <color=yellow>%s
@@ -22,6 +28,9 @@ kick.default.reason=No reason specified.
 ### kick all ###
 
 kickall.command.success=<color=red>All players <color=gray>were kicked from the server <color=green>successfully<color=gray>.
+
+kickall.command.notice.skip_staff=<color=gray>Skipping staff member(s) <color=yellow>%s<color=gray>.
+
 kickall.default.reason=All players were kicked from the server.
 
 ### kick server ###
@@ -29,16 +38,29 @@ kickserver.command.usage=<color=red>Wrong arguments. Use <color=yellow>/kickserv
 kickserver.command.success=<color=red>All players <color=gray>on server <color=yellow>%s <color=gray>were kicked <color=green>successfully<color=gray>.
 kickserver.command.error.not_a_player=<color=red>You must be a player to execute this command with the <color=yellow>this <color=red>parameter.
 kickserver.command.error.server_not_found=<color=red>Server <color=yellow>%s <color=red>does not exist.
+kickserver.command.notice.skip_staff=<color=gray>Skipping staff member(s) <color=yellow>%s<color=gray>.
+
 kickserver.default.reason=All players on your current server were kicked from the server.
 
 ### kick ip ###
 kickip.command.usage=<color=red>Wrong arguments. Use <color=yellow>/kickip \\<ip\\> [reason]<color=red>.
 kickip.command.success=<color=red>All players (%d)<color=gray> with the IP <color=yellow>%s <color=gray>were kicked <color=green>successfully<color=gray>.
 kickip.command.error.invalid_ip=<color=yellow>%s <color=red>is not a valid IP address.
+kickip.command.notice.skip_staff=<color=gray>Skipping staff member(s) <color=yellow>%s<color=gray>.
+
 kickip.default.reason.ip=All players with the IP %s were kicked from the server.
 kickip.default.reason.network=All players in network %s were kicked from the server.
 
-### ban ###
+
+### Command BAN ###
+
+ban.command.usage=<color=red>Wrong arguments. Use <color=yellow>/ban \\<player\\> [-t <time>] [-ip|-xip] \\<reason\\><color=red>.
+
+### Command BanIP ###
+
+banip.command.usage=<color=red>Wrong arguments. Use <color=yellow>/banip \\<player|ip|cidr\\> [-t <time>] \\<reason\\><color=red>.
+
+### LOGIN ###
 login.ban.duration.days=<color=yellow>%02dd
 login.ban.duration.hours=<color=yellow>%02dh
 login.ban.duration.minutes=<color=yellow>%02dm

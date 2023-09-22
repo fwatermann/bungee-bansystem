@@ -11,6 +11,7 @@ import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.logging.Level;
 
@@ -23,7 +24,8 @@ public class CommandKickIP extends Command {
     @Override
     public void execute(CommandSender sender, String[] args) {
 
-        if (!sender.hasPermission(Permissions.KICK_IP) || !sender.hasPermission(Permissions.KICK)) {
+        if (!sender.hasPermission(Permissions.COMMAND_KICK_IP)
+                || !sender.hasPermission(Permissions.COMMAND_KICK)) {
             sender.sendMessage(Translation.component(Translations.NO_PERMISSIONS, sender));
             return;
         }
@@ -50,9 +52,16 @@ public class CommandKickIP extends Command {
                 network = IPUtils.Network.byIP(args[0]);
             }
 
+            boolean kickStaff = sender.hasPermission(Permissions.KICK_STAFF);
+
+            ArrayList<String> staff = new ArrayList<>();
             int count = 0;
             for (ProxiedPlayer pp : ProxyServer.getInstance().getPlayers()) {
                 if (IPUtils.isIPinNetwork(network, pp.getAddress().getAddress().getAddress())) {
+                    if (!kickStaff && pp.hasPermission(Permissions.STAFF)) {
+                        staff.add(pp.getName());
+                        continue;
+                    }
                     if (isNetwork) {
                         pp.disconnect(
                                 MessageGenerator.kickMessage(
@@ -76,6 +85,13 @@ public class CommandKickIP extends Command {
                     }
                     count++;
                 }
+            }
+            if (staff.size() > 0) {
+                sender.sendMessage(
+                        Translation.component(
+                                Translations.KICKIP_COMMAND_NOTICE_SKIP_STAFF,
+                                sender,
+                                String.join(", ", staff)));
             }
             sender.sendMessage(
                     Translation.component(

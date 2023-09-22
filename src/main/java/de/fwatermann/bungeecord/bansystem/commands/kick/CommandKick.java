@@ -21,7 +21,7 @@ public class CommandKick extends Command {
     @Override
     public void execute(CommandSender sender, String[] args) {
 
-        if (!sender.hasPermission(Permissions.KICK)) {
+        if (!sender.hasPermission(Permissions.COMMAND_KICK)) {
             sender.sendMessage(Translation.component(Translations.NO_PERMISSIONS, sender));
             return;
         }
@@ -35,6 +35,12 @@ public class CommandKick extends Command {
         if (target == null) {
             sender.sendMessage(
                     Translation.component(Translations.PLAYER_NOT_FOUND, sender, args[0]));
+            return;
+        }
+
+        if (target.hasPermission(Permissions.STAFF)
+                && !sender.hasPermission(Permissions.KICK_STAFF)) {
+            sender.sendMessage(Translation.component(Translations.KICK_ERROR_STAFF, sender));
             return;
         }
 
