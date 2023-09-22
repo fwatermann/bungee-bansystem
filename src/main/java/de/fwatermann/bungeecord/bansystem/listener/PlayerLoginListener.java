@@ -12,7 +12,7 @@ public class PlayerLoginListener implements Listener {
 
     @EventHandler
     public void onPostLogin(PostLoginEvent event) {
-        BanStatus status = Database.getBanStatus(event.getPlayer().getUniqueId());
+        BanStatus status = Database.getInstance().getBanStatus(event.getPlayer().getUniqueId());
         if (status.banned()) {
             event.getPlayer()
                     .disconnect(

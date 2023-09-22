@@ -4,6 +4,8 @@ import de.fwatermann.bungeecord.bansystem.commands.kick.CommandKick;
 import de.fwatermann.bungeecord.bansystem.commands.kick.CommandKickAll;
 import de.fwatermann.bungeecord.bansystem.commands.kick.CommandKickIP;
 import de.fwatermann.bungeecord.bansystem.commands.kick.CommandKickServer;
+import de.fwatermann.bungeecord.bansystem.database.Database;
+import de.fwatermann.bungeecord.bansystem.database.drivers.MemoryDatabase;
 import de.fwatermann.bungeecord.bansystem.listener.PlayerChatListener;
 import de.fwatermann.bungeecord.bansystem.listener.PlayerLoginListener;
 
@@ -28,6 +30,7 @@ public final class BanSystem extends Plugin {
     @Override
     public void onEnable() {
         Locale.setDefault(Locale.US);
+        Database.setDriver(MemoryDatabase.class);
 
         PluginManager pluginManager = ProxyServer.getInstance().getPluginManager();
 

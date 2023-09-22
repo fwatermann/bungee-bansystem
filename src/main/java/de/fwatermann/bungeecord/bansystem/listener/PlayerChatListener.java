@@ -17,7 +17,7 @@ public class PlayerChatListener implements Listener {
     public void onChat(ChatEvent event) {
         if (!(event.getSender() instanceof ProxiedPlayer pp)) return;
         if (event.getMessage().startsWith("/")) return;
-        MuteStatus muteStatus = Database.getMuteStatus(pp.getUniqueId());
+        MuteStatus muteStatus = Database.getInstance().getMuteStatus(pp.getUniqueId());
         if (muteStatus.muted()) {
             event.setCancelled(true);
             pp.sendMessage(
