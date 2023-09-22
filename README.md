@@ -5,7 +5,7 @@ A BungeeCord plugin that has several features to help manage players across the 
 
 ### 1. Kick
 
-- [ ] Done
+- [x] Done
 
 **Description**: Kick a player from the server network
 
