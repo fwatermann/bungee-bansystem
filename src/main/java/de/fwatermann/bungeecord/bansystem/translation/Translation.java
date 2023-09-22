@@ -82,7 +82,7 @@ public class Translation {
         Matcher matcher = attributeRegex.matcher(rawText);
 
         ComponentBuilder builder = new ComponentBuilder();
-
+        boolean any = false;
         while (matcher.find()) {
             String[] attributes = matcher.group(1).split(";");
             String text = matcher.group(4);
@@ -91,6 +91,7 @@ public class Translation {
             text = text.replace("&lt;", "<").replace("&gt;", ">");
 
             builder.append(text);
+            any = true;
             Arrays.stream(attributes)
                     .map(s -> s.split("="))
                     .forEach(
@@ -118,6 +119,9 @@ public class Translation {
                                     default -> logger.warning("Unknown attribute " + s[0] + "!");
                                 }
                             });
+        }
+        if (!any) {
+            builder.append(rawText);
         }
         return builder.create();
     }
