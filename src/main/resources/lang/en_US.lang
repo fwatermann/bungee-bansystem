@@ -58,6 +58,7 @@ ban.command.usage=<color=red>Wrong arguments. Use <color=yellow>/ban \\<player\\
 ban.command.usage.time=<color=yellow>-t <color=red>must be followed by a time in the format <color=yellow>1s2m3h4d5w6mo7y<color=red>.
 ban.command.usage.time_comb_perma=<color=yellow>-t <color=red>can not be combined with <color=yellow>-perma<color=red>.
 ban.command.usage.ip_comb_xip=<color=yellow>-ip <color=red>can not be combined with <color=yellow>-xip<color=red>.
+ban.command.success=<color=gray>Player <color=red>%s <color=gray>was banned <color=green>successfully<color=gray>.
 
 ban.error.staff=<color=red>You do not have permissions to ban other staff members.
 

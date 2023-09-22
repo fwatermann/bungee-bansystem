@@ -148,7 +148,24 @@ public class CommandBan extends Command {
         if (banIp) {
             Database.getInstance()
                     .addIPBan(target.getAddress().getAddress().getHostAddress(), reason, duration);
+            for (ProxiedPlayer pp : ProxyServer.getInstance().getPlayers()) {
+                if (pp.getAddress()
+                        .getAddress()
+                        .getHostAddress()
+                        .equals(target.getAddress().getAddress().getHostAddress())) {
+                    pp.disconnect(
+                            MessageGenerator.banMessage(
+                                    pp,
+                                    reason,
+                                    banId,
+                                    System.currentTimeMillis(),
+                                    duration == -1 ? -1 : System.currentTimeMillis() + duration));
+                }
+            }
         }
+
+        sender.sendMessage(
+                Translation.component(Translations.BAN_COMMAND_SUCCESS, sender, target.getName()));
 
         // TODO: Add xban
 
