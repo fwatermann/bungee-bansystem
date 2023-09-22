@@ -29,6 +29,14 @@ public abstract class Database {
     public abstract BanStatus getBanStatus(UUID uuid);
 
     /**
+     * Get ban status of an IP.
+     *
+     * @param ip IP to check
+     * @return BanStatus object
+     */
+    public abstract BanStatus getIPBanStatus(String ip);
+
+    /**
      * Get mute status of a player by its UUID.
      *
      * @param uuid UUID of the player
@@ -42,8 +50,19 @@ public abstract class Database {
      * @param uuid UUID of the player
      * @param reason Reason for the ban
      * @param duration Duration of the ban in milliseconds, -1 for permanent.
+     * @return ID of the ban
      */
-    public abstract void ban(UUID uuid, String reason, long duration);
+    public abstract String addBan(UUID uuid, String reason, long duration);
+
+    /**
+     * Ban an IP. This does not work with network addresses.
+     *
+     * @param ip IP to ban
+     * @param reason Reason for the ban
+     * @param duration Duration of the ban in milliseconds, -1 for permanent.
+     * @return ID of the ban
+     */
+    public abstract String addIPBan(String ip, String reason, long duration);
 
     /**
      * Mute a player.
@@ -51,6 +70,7 @@ public abstract class Database {
      * @param uuid UUID of the player
      * @param reason Reason for the mute
      * @param duration Duration of the mute in milliseconds, -1 for permanent.
+     * @return ID of the mute
      */
-    public abstract void mute(UUID uuid, String reason, long duration);
+    public abstract String addMute(UUID uuid, String reason, long duration);
 }

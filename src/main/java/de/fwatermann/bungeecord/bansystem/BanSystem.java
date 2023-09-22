@@ -1,5 +1,6 @@
 package de.fwatermann.bungeecord.bansystem;
 
+import de.fwatermann.bungeecord.bansystem.commands.ban.CommandBan;
 import de.fwatermann.bungeecord.bansystem.commands.kick.CommandKick;
 import de.fwatermann.bungeecord.bansystem.commands.kick.CommandKickAll;
 import de.fwatermann.bungeecord.bansystem.commands.kick.CommandKickIP;
@@ -41,6 +42,8 @@ public final class BanSystem extends Plugin {
         pluginManager.registerCommand(this, new CommandKickAll());
         pluginManager.registerCommand(this, new CommandKickServer());
         pluginManager.registerCommand(this, new CommandKickIP());
+
+        pluginManager.registerCommand(this, new CommandBan());
     }
 
     @Override
