@@ -49,6 +49,7 @@ public class Translations {
     public static final String BAN_COMMAND_USAGE_TIME_COMB_PERMA =
             "ban.command.usage.time_comb_perma";
     public static final String BAN_COMMAND_USAGE_IP_COMB_XIP = "ban.command.usage.ip_comb_xip";
+    public static final String BAN_ERROR_STAFF = "ban.command.error.staff";
 
     public static final String BANIP_COMMAND_USAGE = "banip.command.usage";
 }

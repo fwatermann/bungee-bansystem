@@ -40,7 +40,14 @@ public class CommandBan extends Command {
         ProxiedPlayer target = ProxyServer.getInstance().getPlayer(args[0]);
 
         if (target == null) {
-            sender.sendMessage(Translation.component(Translations.PLAYER_NOT_FOUND, sender));
+            sender.sendMessage(
+                    Translation.component(Translations.PLAYER_NOT_FOUND, sender, args[0]));
+            return;
+        }
+
+        if (target.hasPermission(Permissions.STAFF)
+                && !sender.hasPermission(Permissions.BAN_STAFF)) {
+            sender.sendMessage(Translation.component(Translations.BAN_ERROR_STAFF, sender));
             return;
         }
 
@@ -71,31 +78,25 @@ public class CommandBan extends Command {
                 String unit = matcher.group(2);
                 int amount = Integer.parseInt(matcher.group(1));
                 switch (unit) {
-                    case "s": // Second
-                        duration += amount * 1000;
-                        break;
-                    case "m": // Minute
-                        duration += amount * 1000 * 60;
-                        break;
-                    case "h": // Hour
-                        duration += amount * 1000 * 60 * 60;
-                        break;
-                    case "d": // Day
-                        duration += amount * 1000 * 60 * 60 * 24;
-                        break;
-                    case "w": // Week
-                        duration += amount * 1000 * 60 * 60 * 24 * 7;
-                        break;
-                    case "mo": // Month (30 days)
-                        duration += amount * 1000 * 60 * 60 * 24 * 30;
-                        break;
-                    case "y": // Year (365 days)
-                        duration += amount * 1000 * 60 * 60 * 24 * 365;
-                        break;
-                    default:
+                    case "s" -> // Second
+                    duration += amount * 1000L;
+                    case "m" -> // Minute
+                    duration += amount * 1000L * 60L;
+                    case "h" -> // Hour
+                    duration += amount * 1000L * 60L * 60L;
+                    case "d" -> // Day
+                    duration += amount * 1000L * 60L * 60L * 24L;
+                    case "w" -> // Week
+                    duration += amount * 1000L * 60L * 60L * 24L * 7L;
+                    case "mo" -> // Month (30 days)
+                    duration += amount * 1000L * 60L * 60L * 24L * 30L;
+                    case "y" -> // Year (365 days)
+                    duration += amount * 1000L * 60L * 60L * 24L * 365L;
+                    default -> {
                         sender.sendMessage(
                                 Translation.component(Translations.BAN_COMMAND_USAGE_TIME, sender));
                         return;
+                    }
                 }
             }
 
@@ -123,7 +124,17 @@ public class CommandBan extends Command {
             arguments.remove("-xip");
         }
 
+        if (duration == 0) {
+            duration = 1000L * 60L * 60L * 24L * 30L; // 30 days
+        }
+
         String reason = String.join(" ", arguments);
+
+        if (reason.isEmpty()) {
+            sender.sendMessage(Translation.component(Translations.BAN_COMMAND_USAGE, sender));
+            return;
+        }
+
         String banId = Database.getInstance().addBan(target.getUniqueId(), reason, duration);
 
         target.disconnect(
@@ -132,7 +143,7 @@ public class CommandBan extends Command {
                         reason,
                         banId,
                         System.currentTimeMillis(),
-                        System.currentTimeMillis() + duration));
+                        duration == -1 ? -1 : System.currentTimeMillis() + duration));
 
         if (banIp) {
             Database.getInstance()

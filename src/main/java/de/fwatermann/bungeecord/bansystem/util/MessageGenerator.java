@@ -28,7 +28,7 @@ public class MessageGenerator {
                         / 1000;
 
         BaseComponent[] time;
-        if (pUntil == -1) {
+        if (pUntil == -1L) {
             time = Translation.component("login.ban.duration.permanent", locale);
         } else {
             ComponentBuilder builder = new ComponentBuilder();
@@ -50,7 +50,17 @@ public class MessageGenerator {
                         Translation.component("login.ban.duration.seconds", locale, seconds));
             }
             time = builder.create();
+            if (time.length == 0) {
+                time =
+                        new ComponentBuilder()
+                                .append(
+                                        Translation.component(
+                                                "login.ban.duration.seconds", locale, 0))
+                                .create();
+            }
         }
+
+        System.out.printf("pUntil: %d time.length: %d%n", pUntil, time.length);
 
         return new ComponentBuilder()
                 .append(Translation.component("login.ban.spacer", locale))

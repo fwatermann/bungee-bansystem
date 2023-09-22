@@ -54,10 +54,12 @@ kickip.default.reason.network=All players in network %s were kicked from the ser
 
 ### Command BAN ###
 
-ban.command.usage=<color=red>Wrong arguments. Use <color=yellow>/ban \\<player\\> [-t <time>|-perma] [-ip|-xip] \\<reason\\><color=red>.
+ban.command.usage=<color=red>Wrong arguments. Use <color=yellow>/ban \\<player\\> [-t \\<time\\>|-perma] [-ip|-xip] \\<reason\\><color=red>.
 ban.command.usage.time=<color=yellow>-t <color=red>must be followed by a time in the format <color=yellow>1s2m3h4d5w6mo7y<color=red>.
 ban.command.usage.time_comb_perma=<color=yellow>-t <color=red>can not be combined with <color=yellow>-perma<color=red>.
 ban.command.usage.ip_comb_xip=<color=yellow>-ip <color=red>can not be combined with <color=yellow>-xip<color=red>.
+
+ban.error.staff=<color=red>You do not have permissions to ban other staff members.
 
 ### Command BanIP ###
 
@@ -68,7 +70,7 @@ login.ban.duration.days=<color=yellow>%02dd
 login.ban.duration.hours=<color=yellow>%02dh
 login.ban.duration.minutes=<color=yellow>%02dm
 login.ban.duration.seconds=<color=yellow>%02ds
-login.ban.duration.permanent=permanent
+login.ban.duration.permanent=<color=dark_red;underlined=true>permanent<reset=true>
 login.ban.spacer=<strikethrough=true;color=red;bold=true>                        <reset=true>
 login.ban.headline=<color=red>You are banned from this server!
 login.ban.reason=<color=dark_aqua>Reason<color=gray>: <color=yellow>%s
