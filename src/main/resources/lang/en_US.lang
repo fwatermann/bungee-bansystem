@@ -4,6 +4,7 @@ chat.message.muted=<color=red>Your message was not sent. Reason for your mute: <
 chat.message.muted.duration=<color=red>Your mute will expire in <color=yellow>%2d:%2d:%2d
 
 ### General ###
+error.error=<color=red>An error occurred while executing this command. <color=yellow>%s
 error.command_usage=<color=red>Wrong arguments. Use: <color=yellow>%s
 error.player_not_found=<color=red>Player <color=yellow>%s <color=red>could not be found.
 error.permissions=<color=red>You do not have the required permissions to execute this command.
@@ -16,19 +17,26 @@ kick.player.headline=<color=red>You were kicked from the server.
 kick.player.reason=<color=dark_aqua>Reason<color=gray>: <color=yellow>%s
 kick.player.spacer=<strikethrough=true;color=red;bold=true>                        <reset=true>
 
-kick.default.reason=No specific reason was given.
+kick.default.reason=No reason specified.
 
 ### kick all ###
 
 kickall.command.success=<color=red>All players <color=gray>were kicked from the server <color=green>successfully<color=gray>.
-kickall.default.reason=All players were kicked for no specific reason.
+kickall.default.reason=All players were kicked from the server.
 
 ### kick server ###
 kickserver.command.usage=<color=red>Wrong arguments. Use <color=yellow>/kickserver \\<server\\> [reason]<color=red>.
 kickserver.command.success=<color=red>All players <color=gray>on server <color=yellow>%s <color=gray>were kicked <color=green>successfully<color=gray>.
 kickserver.command.error.not_a_player=<color=red>You must be a player to execute this command with the <color=yellow>this <color=red>parameter.
 kickserver.command.error.server_not_found=<color=red>Server <color=yellow>%s <color=red>does not exist.
-kickserver.default.reason=All players on your current server were kicked for no specific reason.
+kickserver.default.reason=All players on your current server were kicked from the server.
+
+### kick ip ###
+kickip.command.usage=<color=red>Wrong arguments. Use <color=yellow>/kickip \\<ip\\> [reason]<color=red>.
+kickip.command.success=<color=red>All players (%d)<color=gray> with the IP <color=yellow>%s <color=gray>were kicked <color=green>successfully<color=gray>.
+kickip.command.error.invalid_ip=<color=yellow>%s <color=red>is not a valid IP address.
+kickip.default.reason.ip=All players with the IP %s were kicked from the server.
+kickip.default.reason.network=All players in network %s were kicked from the server.
 
 ### ban ###
 login.ban.duration.days=<color=yellow>%02dd

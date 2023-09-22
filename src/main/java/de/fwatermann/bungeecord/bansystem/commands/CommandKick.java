@@ -15,7 +15,7 @@ import java.util.Arrays;
 public class CommandKick extends Command {
 
     public CommandKick() {
-        super("kick", Permissions.KICK);
+        super("kick");
     }
 
     @Override

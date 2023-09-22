@@ -12,7 +12,7 @@ import net.md_5.bungee.api.plugin.Command;
 public class CommandKickAll extends Command {
 
     public CommandKickAll() {
-        super("kickall", Permissions.KICK_ALL);
+        super("kickall");
     }
 
     @Override
@@ -33,7 +33,7 @@ public class CommandKickAll extends Command {
                                                 Translation.text(
                                                         Translations.KICKALL_DEFAULT_REASON, pp)));
                             });
-            sender.sendMessage(Translation.component(Translations.KICKALL_SUCCESS, sender));
+            sender.sendMessage(Translation.component(Translations.KICKALL_COMMAND_SUCCESS, sender));
             return;
         }
         String reason = String.join(" ", args);
