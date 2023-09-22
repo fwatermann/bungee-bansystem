@@ -12,16 +12,32 @@ public class PlayerLoginListener implements Listener {
 
     @EventHandler
     public void onPostLogin(PostLoginEvent event) {
-        BanStatus status = Database.getInstance().getBanStatus(event.getPlayer().getUniqueId());
-        if (status.banned()) {
+        BanStatus statusPlayer =
+                Database.getInstance().getBanStatus(event.getPlayer().getUniqueId());
+        if (statusPlayer.banned()) {
             event.getPlayer()
                     .disconnect(
                             MessageGenerator.banMessage(
                                     event.getPlayer().getLocale(),
-                                    status.reason(),
-                                    status.banId(),
-                                    status.since(),
-                                    status.until()));
+                                    statusPlayer.reason(),
+                                    statusPlayer.banId(),
+                                    statusPlayer.since(),
+                                    statusPlayer.until()));
+        }
+
+        BanStatus statusIP =
+                Database.getInstance()
+                        .getIPBanStatus(
+                                event.getPlayer().getAddress().getAddress().getHostAddress());
+        if (statusIP.banned()) {
+            event.getPlayer()
+                    .disconnect(
+                            MessageGenerator.banMessage(
+                                    event.getPlayer().getLocale(),
+                                    statusIP.reason(),
+                                    statusIP.banId(),
+                                    statusIP.since(),
+                                    statusIP.until()));
         }
     }
 }
