@@ -1,4 +1,4 @@
-package de.fwatermann.bungeecord.bansystem.commands;
+package de.fwatermann.bungeecord.bansystem.commands.kick;
 
 import de.fwatermann.bungeecord.bansystem.Permissions;
 import de.fwatermann.bungeecord.bansystem.Translations;

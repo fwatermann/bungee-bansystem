@@ -1,9 +1,9 @@
 package de.fwatermann.bungeecord.bansystem;
 
-import de.fwatermann.bungeecord.bansystem.commands.CommandKick;
-import de.fwatermann.bungeecord.bansystem.commands.CommandKickAll;
-import de.fwatermann.bungeecord.bansystem.commands.CommandKickIP;
-import de.fwatermann.bungeecord.bansystem.commands.CommandKickServer;
+import de.fwatermann.bungeecord.bansystem.commands.kick.CommandKick;
+import de.fwatermann.bungeecord.bansystem.commands.kick.CommandKickAll;
+import de.fwatermann.bungeecord.bansystem.commands.kick.CommandKickIP;
+import de.fwatermann.bungeecord.bansystem.commands.kick.CommandKickServer;
 import de.fwatermann.bungeecord.bansystem.listener.PlayerChatListener;
 import de.fwatermann.bungeecord.bansystem.listener.PlayerLoginListener;
 
