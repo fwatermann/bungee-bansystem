@@ -64,7 +64,11 @@ ban.error.staff=<color=red>You do not have permissions to ban other staff member
 
 ### Command BanIP ###
 
-banip.command.usage=<color=red>Wrong arguments. Use <color=yellow>/banip \\<player|ip|cidr\\> [-t <time>] \\<reason\\><color=red>.
+banip.command.usage=<color=red>Wrong arguments. Use <color=yellow>/banip \\<player|ip|cidr\\> [-t \\<time\\>] \\<reason\\><color=red>.
+banip.command.error.invalid_ip=<color=yellow>%s <color=red>is not a valid IP address.
+banip.command.error.invalid_cidr=<color=yellow>%s <color=red>is not a valid CIDR notation.
+banip.command.error.time_too_long=<color=red>Time must be <color=yellow>less than 12 hours<color=red> due to regular ip changes of players.
+
 
 ### LOGIN ###
 login.ban.duration.days=<color=yellow>%02dd

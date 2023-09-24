@@ -53,4 +53,9 @@ public class Translations {
     public static final String BAN_ERROR_STAFF = "ban.command.error.staff";
 
     public static final String BANIP_COMMAND_USAGE = "banip.command.usage";
+    public static final String BANIP_COMMAND_ERROR_TIME_TOO_LONG =
+            "banip.command.error.time_too_long";
+    public static final String BANIP_COMMAND_ERROR_INVALID_IP = "banip.command.error.invalid_ip";
+    public static final String BANIP_COMMAND_ERROR_INVALID_CIDR =
+            "banip.command.error.invalid_cidr";
 }
