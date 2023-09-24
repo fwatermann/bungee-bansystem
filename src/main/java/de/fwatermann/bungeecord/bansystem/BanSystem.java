@@ -5,15 +5,19 @@ import de.fwatermann.bungeecord.bansystem.commands.kick.CommandKick;
 import de.fwatermann.bungeecord.bansystem.commands.kick.CommandKickAll;
 import de.fwatermann.bungeecord.bansystem.commands.kick.CommandKickIP;
 import de.fwatermann.bungeecord.bansystem.commands.kick.CommandKickServer;
-import de.fwatermann.bungeecord.bansystem.database.Database;
-import de.fwatermann.bungeecord.bansystem.database.drivers.MemoryDatabase;
 import de.fwatermann.bungeecord.bansystem.listener.PlayerChatListener;
 import de.fwatermann.bungeecord.bansystem.listener.PlayerLoginListener;
+import de.fwatermann.bungeecord.bansystem.util.FileUtils;
 
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.api.plugin.PluginManager;
+import net.md_5.bungee.config.Configuration;
+import net.md_5.bungee.config.ConfigurationProvider;
+import net.md_5.bungee.config.YamlConfiguration;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Locale;
 
 public final class BanSystem extends Plugin {
@@ -28,10 +32,27 @@ public final class BanSystem extends Plugin {
         INSTANCE = this;
     }
 
+    public Configuration config;
+
     @Override
     public void onEnable() {
         Locale.setDefault(Locale.US);
-        Database.setDriver(MemoryDatabase.class);
+
+        File configFile = new File(this.getDataFolder(), "config.yml");
+        if (!configFile.exists()) {
+            try {
+                FileUtils.inputStreamToFile(
+                        this.getResourceAsStream("config/config.yml"), configFile);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        try {
+            this.config =
+                    ConfigurationProvider.getProvider(YamlConfiguration.class).load(configFile);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
         PluginManager pluginManager = ProxyServer.getInstance().getPluginManager();
 

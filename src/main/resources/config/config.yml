@@ -1,0 +1,6 @@
+database:
+# Specifies the database driver used to store ban/mute data.
+# Default drivers are: MySQL, Memory.
+# The configuration for each driver is specified in its own configuration file. (for MySQL: mysql.yml)
+# You may implement your own driver and specify it here (full class name e.g. com.example.MyDriver)
+  driver: Memory
