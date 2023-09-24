@@ -72,34 +72,7 @@ public class CommandBan extends Command {
                 return;
             }
             String timeStr = arguments.get(index + 1);
-
-            // Parse timeStr to duration
-            Matcher matcher = regex_Time.matcher(timeStr);
-            while (matcher.find()) {
-                String unit = matcher.group(2);
-                int amount = Integer.parseInt(matcher.group(1));
-                switch (unit) {
-                    case "s" -> // Second
-                    duration += amount * 1000L;
-                    case "m" -> // Minute
-                    duration += amount * 1000L * 60L;
-                    case "h" -> // Hour
-                    duration += amount * 1000L * 60L * 60L;
-                    case "d" -> // Day
-                    duration += amount * 1000L * 60L * 60L * 24L;
-                    case "w" -> // Week
-                    duration += amount * 1000L * 60L * 60L * 24L * 7L;
-                    case "mo" -> // Month (30 days)
-                    duration += amount * 1000L * 60L * 60L * 24L * 30L;
-                    case "y" -> // Year (365 days)
-                    duration += amount * 1000L * 60L * 60L * 24L * 365L;
-                    default -> {
-                        sender.sendMessage(
-                                Translation.component(Translations.BAN_COMMAND_USAGE_TIME, sender));
-                        return;
-                    }
-                }
-            }
+            duration = parseTime(timeStr, 0);
 
             arguments.remove(index);
             arguments.remove(index);
@@ -163,5 +136,41 @@ public class CommandBan extends Command {
 
         sender.sendMessage(
                 Translation.component(Translations.BAN_COMMAND_SUCCESS, sender, target.getName()));
+    }
+
+    /**
+     * Parse time string to duration in milliseconds.
+     *
+     * @param timeStr Time string
+     * @param defaultTime Default time in milliseconds
+     * @return Duration in milliseconds (-1 if invalid)
+     */
+    public static long parseTime(String timeStr, long defaultTime) throws NumberFormatException {
+        long duration = 0;
+        Matcher matcher = regex_Time.matcher(timeStr);
+        while (matcher.find()) {
+            String unit = matcher.group(2);
+            int amount = Integer.parseInt(matcher.group(1));
+            switch (unit) {
+                case "s" -> // Second
+                duration += amount * 1000L;
+                case "m" -> // Minute
+                duration += amount * 1000L * 60L;
+                case "h" -> // Hour
+                duration += amount * 1000L * 60L * 60L;
+                case "d" -> // Day
+                duration += amount * 1000L * 60L * 60L * 24L;
+                case "w" -> // Week
+                duration += amount * 1000L * 60L * 60L * 24L * 7L;
+                case "mo" -> // Month (30 days)
+                duration += amount * 1000L * 60L * 60L * 24L * 30L;
+                case "y" -> // Year (365 days)
+                duration += amount * 1000L * 60L * 60L * 24L * 365L;
+                default -> {
+                    throw new NumberFormatException("Invalid time unit: " + unit);
+                }
+            }
+        }
+        return duration;
     }
 }
