@@ -3,6 +3,7 @@ package de.fwatermann.bungeecord.bansystem.commands.ban;
 import de.fwatermann.bungeecord.bansystem.Permissions;
 import de.fwatermann.bungeecord.bansystem.Translations;
 import de.fwatermann.bungeecord.bansystem.database.Database;
+import de.fwatermann.bungeecord.bansystem.database.status.BanStatus;
 import de.fwatermann.bungeecord.bansystem.translation.Translation;
 import de.fwatermann.bungeecord.bansystem.util.MessageGenerator;
 
@@ -135,19 +136,15 @@ public class CommandBan extends Command {
             return;
         }
 
-        String banId = Database.getInstance().addBan(target.getUniqueId(), reason, duration);
+        BanStatus ban = Database.addBan(target.getUniqueId(), reason, duration);
 
         target.disconnect(
                 MessageGenerator.banMessage(
-                        target,
-                        reason,
-                        banId,
-                        System.currentTimeMillis(),
-                        duration == -1 ? -1 : System.currentTimeMillis() + duration));
+                        target, reason, ban.banId(), System.currentTimeMillis(), ban.end()));
 
         if (banIp) {
-            Database.getInstance()
-                    .addIPBan(target.getAddress().getAddress().getHostAddress(), reason, duration);
+            Database.addIPBan(
+                    target.getAddress().getAddress().getHostAddress(), reason, duration, xban);
             for (ProxiedPlayer pp : ProxyServer.getInstance().getPlayers()) {
                 if (pp.getAddress()
                         .getAddress()
@@ -157,17 +154,14 @@ public class CommandBan extends Command {
                             MessageGenerator.banMessage(
                                     pp,
                                     reason,
-                                    banId,
+                                    ban.banId(),
                                     System.currentTimeMillis(),
-                                    duration == -1 ? -1 : System.currentTimeMillis() + duration));
+                                    ban.end()));
                 }
             }
         }
 
         sender.sendMessage(
                 Translation.component(Translations.BAN_COMMAND_SUCCESS, sender, target.getName()));
-
-        // TODO: Add xban
-
     }
 }

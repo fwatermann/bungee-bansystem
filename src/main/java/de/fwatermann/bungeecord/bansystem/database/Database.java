@@ -1,23 +1,54 @@
 package de.fwatermann.bungeecord.bansystem.database;
 
+import de.fwatermann.bungeecord.bansystem.BanSystem;
+import de.fwatermann.bungeecord.bansystem.database.drivers.DatabaseDriver;
+import de.fwatermann.bungeecord.bansystem.database.status.BanStatus;
+import de.fwatermann.bungeecord.bansystem.database.status.IPBanStatus;
+import de.fwatermann.bungeecord.bansystem.database.status.MuteStatus;
+
 import java.lang.reflect.InvocationTargetException;
 import java.util.UUID;
+import java.util.logging.Level;
 
-/** This class is an abstraction layer for the database. */
-public abstract class Database {
+public class Database {
 
-    private static Database instance;
+    private static final Cache<UUID, BanStatus> cache_ban = new Cache<>();
+    private static final Cache<String, IPBanStatus> cache_ipban = new Cache<>();
+    private static final Cache<UUID, MuteStatus> cache_mute = new Cache<>();
 
-    public static Database getInstance() {
-        return instance;
-    }
+    private static final DatabaseDriver driver;
 
-    public static void setDriver(Class<? extends Database> driver) {
-        try {
-            Database.instance = (Database) driver.getConstructors()[0].newInstance();
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
-            throw new RuntimeException(e);
+    static {
+        String driverName = BanSystem.getInstance().config.getString("database.driver");
+        if (driverName == null) {
+            BanSystem.getInstance()
+                    .getLogger()
+                    .log(Level.WARNING, "No database driver specified, using memory driver!");
+            driverName = "memory";
         }
+
+        switch (driverName.toLowerCase()) {
+            case "memory" -> driver =
+                    new de.fwatermann.bungeecord.bansystem.database.drivers.MemoryDatabase();
+            case "mysql" -> driver =
+                    new de.fwatermann.bungeecord.bansystem.database.drivers.MySQLDatabase();
+            default -> {
+                try {
+                    Class<?> clazz = Class.forName(driverName);
+                    if (!DatabaseDriver.class.isAssignableFrom(clazz)) {
+                        throw new RuntimeException("Driver class must implement DatabaseDriver!");
+                    }
+                    driver = (DatabaseDriver) clazz.getConstructors()[0].newInstance();
+                } catch (ClassNotFoundException e) {
+                    throw new RuntimeException("Database driver class not found!", e);
+                } catch (InstantiationException
+                        | IllegalAccessException
+                        | InvocationTargetException e) {
+                    throw new RuntimeException("Failed to instantiate database driver!", e);
+                }
+            }
+        }
+        driver.init();
     }
 
     /**
@@ -26,7 +57,9 @@ public abstract class Database {
      * @param uuid UUID of the player
      * @return BanStatus object
      */
-    public abstract BanStatus getBanStatus(UUID uuid);
+    public static BanStatus getBanStatus(UUID uuid) {
+        return cache_ban.lookup(uuid, () -> driver.getBanStatus(uuid));
+    }
 
     /**
      * Get ban status of an IP.
@@ -34,7 +67,9 @@ public abstract class Database {
      * @param ip IP to check
      * @return BanStatus object
      */
-    public abstract BanStatus getIPBanStatus(String ip);
+    public static IPBanStatus getIPBanStatus(String ip) {
+        return cache_ipban.lookup(ip, () -> driver.getIPBanStatus(ip));
+    }
 
     /**
      * Get mute status of a player by its UUID.
@@ -42,7 +77,9 @@ public abstract class Database {
      * @param uuid UUID of the player
      * @return MuteStatus object
      */
-    public abstract MuteStatus getMuteStatus(UUID uuid);
+    public static MuteStatus getMuteStatus(UUID uuid) {
+        return cache_mute.lookup(uuid, () -> driver.getMuteStatus(uuid));
+    }
 
     /**
      * Ban a player.
@@ -50,9 +87,19 @@ public abstract class Database {
      * @param uuid UUID of the player
      * @param reason Reason for the ban
      * @param duration Duration of the ban in milliseconds, -1 for permanent.
-     * @return ID of the ban
+     * @return BanStatus object
      */
-    public abstract String addBan(UUID uuid, String reason, long duration);
+    public static BanStatus addBan(UUID uuid, String reason, long duration) {
+        String id = driver.addBan(uuid, reason, duration);
+        BanStatus status =
+                new BanStatus(
+                        reason,
+                        System.currentTimeMillis(),
+                        duration == -1 ? -1 : System.currentTimeMillis() + duration,
+                        id);
+        cache_ban.add(uuid, status);
+        return status;
+    }
 
     /**
      * Ban an IP. This does not work with network addresses.
@@ -60,9 +107,20 @@ public abstract class Database {
      * @param ip IP to ban
      * @param reason Reason for the ban
      * @param duration Duration of the ban in milliseconds, -1 for permanent.
-     * @return ID of the ban
+     * @return IPBanStatus object
      */
-    public abstract String addIPBan(String ip, String reason, long duration);
+    public static IPBanStatus addIPBan(String ip, String reason, long duration, boolean xban) {
+        String id = driver.addIPBan(ip, reason, duration, xban);
+        IPBanStatus status =
+                new IPBanStatus(
+                        reason,
+                        System.currentTimeMillis(),
+                        duration == -1 ? -1 : System.currentTimeMillis() + duration,
+                        id,
+                        xban);
+        cache_ipban.add(ip, status);
+        return status;
+    }
 
     /**
      * Mute a player.
@@ -72,5 +130,15 @@ public abstract class Database {
      * @param duration Duration of the mute in milliseconds, -1 for permanent.
      * @return ID of the mute
      */
-    public abstract String addMute(UUID uuid, String reason, long duration);
+    public static MuteStatus addMute(UUID uuid, String reason, long duration) {
+        String id = driver.addMute(uuid, reason, duration);
+        MuteStatus status =
+                new MuteStatus(
+                        reason,
+                        System.currentTimeMillis(),
+                        duration == -1 ? -1 : System.currentTimeMillis() + duration,
+                        id);
+        cache_mute.add(uuid, status);
+        return status;
+    }
 }

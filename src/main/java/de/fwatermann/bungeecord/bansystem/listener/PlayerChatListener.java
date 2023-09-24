@@ -1,7 +1,7 @@
 package de.fwatermann.bungeecord.bansystem.listener;
 
 import de.fwatermann.bungeecord.bansystem.database.Database;
-import de.fwatermann.bungeecord.bansystem.database.MuteStatus;
+import de.fwatermann.bungeecord.bansystem.database.status.MuteStatus;
 import de.fwatermann.bungeecord.bansystem.util.Constants;
 
 import net.md_5.bungee.api.ChatMessageType;
@@ -17,7 +17,7 @@ public class PlayerChatListener implements Listener {
     public void onChat(ChatEvent event) {
         if (!(event.getSender() instanceof ProxiedPlayer pp)) return;
         if (event.getMessage().startsWith("/")) return;
-        MuteStatus muteStatus = Database.getInstance().getMuteStatus(pp.getUniqueId());
+        MuteStatus muteStatus = Database.getMuteStatus(pp.getUniqueId());
         if (muteStatus.muted()) {
             event.setCancelled(true);
             pp.sendMessage(
