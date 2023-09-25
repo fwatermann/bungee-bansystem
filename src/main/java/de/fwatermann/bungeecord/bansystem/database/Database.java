@@ -15,6 +15,9 @@ public class Database {
     private static final Cache<UUID, BanStatus> cache_ban = new Cache<>();
     private static final Cache<String, IPBanStatus> cache_ipban = new Cache<>();
     private static final Cache<UUID, MuteStatus> cache_mute = new Cache<>();
+    private static final Cache<UUID, String> cache_name = new Cache<>();
+    private static final Cache<String, UUID> cache_uuid =
+            new Cache<>(60000, 1000, String::toLowerCase);
 
     private static final DatabaseDriver driver;
 
@@ -97,7 +100,7 @@ public class Database {
                         System.currentTimeMillis(),
                         duration == -1 ? -1 : System.currentTimeMillis() + duration,
                         id);
-        cache_ban.add(uuid, status);
+        cache_ban.put(uuid, status);
         return status;
     }
 
@@ -118,7 +121,7 @@ public class Database {
                         duration == -1 ? -1 : System.currentTimeMillis() + duration,
                         id,
                         xban);
-        cache_ipban.add(ip, status);
+        cache_ipban.put(ip, status);
         return status;
     }
 
@@ -138,7 +141,39 @@ public class Database {
                         System.currentTimeMillis(),
                         duration == -1 ? -1 : System.currentTimeMillis() + duration,
                         id);
-        cache_mute.add(uuid, status);
+        cache_mute.put(uuid, status);
         return status;
+    }
+
+    /**
+     * Update player database entry.
+     *
+     * @param uuid UUID of the player
+     * @param name Name of the player
+     */
+    public static void updatePlayer(UUID uuid, String name) {
+        cache_uuid.put(name.toLowerCase(), uuid);
+        cache_name.put(uuid, name);
+        driver.updatePlayerEntry(uuid, name);
+    }
+
+    /**
+     * Get the name of a player by its UUID.
+     *
+     * @param uuid UUID of the player
+     * @return Name of the player
+     */
+    public static String getNameByUUID(UUID uuid) {
+        return cache_name.lookup(uuid, () -> driver.getNameByUUID(uuid));
+    }
+
+    /**
+     * Get the UUID of a player by its name.
+     *
+     * @param name Name of the player
+     * @return UUID of the player
+     */
+    public static UUID getUUIDByName(String name) {
+        return cache_uuid.lookup(name, () -> driver.getUUIDByName(name));
     }
 }

@@ -13,6 +13,9 @@ public class PlayerLoginListener implements Listener {
 
     @EventHandler
     public void onPostLogin(PostLoginEvent event) {
+        // Update player database entry
+        Database.updatePlayer(event.getPlayer().getUniqueId(), event.getPlayer().getName());
+
         BanStatus statusPlayer = Database.getBanStatus(event.getPlayer().getUniqueId());
         if (statusPlayer.banned()) {
             event.getPlayer()

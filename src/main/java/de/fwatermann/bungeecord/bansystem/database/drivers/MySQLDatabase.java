@@ -82,4 +82,17 @@ public class MySQLDatabase extends DatabaseDriver {
     public String addMute(UUID uuid, String reason, long duration) {
         return null;
     }
+
+    @Override
+    public UUID getUUIDByName(String name) {
+        return null;
+    }
+
+    @Override
+    public String getNameByUUID(UUID uuid) {
+        return null;
+    }
+
+    @Override
+    public void updatePlayerEntry(UUID uuid, String name) {}
 }

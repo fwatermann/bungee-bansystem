@@ -5,6 +5,7 @@ import de.fwatermann.bungeecord.bansystem.database.status.IPBanStatus;
 import de.fwatermann.bungeecord.bansystem.database.status.MuteStatus;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 public class MemoryDatabase extends DatabaseDriver {
@@ -12,6 +13,8 @@ public class MemoryDatabase extends DatabaseDriver {
     private HashMap<String, Ban> accountBans = new HashMap<>();
     private HashMap<String, IPBan> ipBans = new HashMap<>();
     private HashMap<String, Mute> mutes = new HashMap<>();
+
+    private HashMap<UUID, String> accounts = new HashMap<>();
 
     @Override
     public BanStatus getBanStatus(UUID uuid) {
@@ -75,6 +78,25 @@ public class MemoryDatabase extends DatabaseDriver {
                         duration == -1 ? -1 : System.currentTimeMillis() + duration);
         this.mutes.put(uuid.toString(), mute);
         return mute.id;
+    }
+
+    @Override
+    public UUID getUUIDByName(String name) {
+        return this.accounts.entrySet().stream()
+                .filter(entry -> entry.getValue().equalsIgnoreCase(name))
+                .map(Map.Entry::getKey)
+                .findFirst()
+                .orElse(null);
+    }
+
+    @Override
+    public String getNameByUUID(UUID uuid) {
+        return this.accounts.getOrDefault(uuid, null);
+    }
+
+    @Override
+    public void updatePlayerEntry(UUID uuid, String name) {
+        this.accounts.put(uuid, name);
     }
 
     private record Ban(String id, String reason, long start, long end) {}

@@ -70,4 +70,28 @@ public abstract class DatabaseDriver {
      * @return ID of the mute
      */
     public abstract String addMute(UUID uuid, String reason, long duration);
+
+    /**
+     * Get a UUID by its player name.
+     *
+     * @param name Name of the player
+     * @return UUID of the player
+     */
+    public abstract UUID getUUIDByName(String name);
+
+    /**
+     * Get the name of a player by its UUID.
+     *
+     * @param uuid UUID of the player
+     * @return Name of the player
+     */
+    public abstract String getNameByUUID(UUID uuid);
+
+    /**
+     * Update the name/uuid of a player.
+     *
+     * @param uuid UUID of the player
+     * @param name Name of the player
+     */
+    public abstract void updatePlayerEntry(UUID uuid, String name);
 }
