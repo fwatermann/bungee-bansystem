@@ -14,7 +14,7 @@ prefix.mute=<color=red>[<color=yellow>MUTE<color=red>] <color=gray>
 prefix.kick=<color=gold>[<color=yellow>KICK<color=gold>] <color=gray>
 
 ### kick ###
-kick.command.usage=<color=red>Wrong arguments. Use <color=yellow>/kick \\<player\\> [reason]
+kick.command.usage=<color=red>Wrong arguments. Use <color=yellow>/kick <player> [reason]
 kick.command.success=<color=gray>Player <color=red>%s <color=gray>was kicked from the server <color=green>successfully<color=gray>.
 
 kick.command.error.staff=<color=red>You do not have permissions to kick other staff members.
@@ -34,7 +34,7 @@ kickall.command.notice.skip_staff=<color=gray>Skipping staff member(s) <color=ye
 kickall.default.reason=All players were kicked from the server.
 
 ### kick server ###
-kickserver.command.usage=<color=red>Wrong arguments. Use <color=yellow>/kickserver \\<server\\> [reason]<color=red>.
+kickserver.command.usage=<color=red>Wrong arguments. Use <color=yellow>/kickserver <server> [reason]<color=red>.
 kickserver.command.success=<color=red>All players <color=gray>on server <color=yellow>%s <color=gray>were kicked <color=green>successfully<color=gray>.
 kickserver.command.error.not_a_player=<color=red>You must be a player to execute this command with the <color=yellow>this <color=red>parameter.
 kickserver.command.error.server_not_found=<color=red>Server <color=yellow>%s <color=red>does not exist.
@@ -43,7 +43,7 @@ kickserver.command.notice.skip_staff=<color=gray>Skipping staff member(s) <color
 kickserver.default.reason=All players on your current server were kicked from the server.
 
 ### kick ip ###
-kickip.command.usage=<color=red>Wrong arguments. Use <color=yellow>/kickip \\<ip\\> [reason]<color=red>.
+kickip.command.usage=<color=red>Wrong arguments. Use <color=yellow>/kickip <ip> [reason]<color=red>.
 kickip.command.success=<color=red>All players (%d)<color=gray> with the IP <color=yellow>%s <color=gray>were kicked <color=green>successfully<color=gray>.
 kickip.command.error.invalid_ip=<color=yellow>%s <color=red>is not a valid IP address.
 kickip.command.notice.skip_staff=<color=gray>Skipping staff member(s) <color=yellow>%s<color=gray>.
@@ -54,7 +54,7 @@ kickip.default.reason.network=All players in network %s were kicked from the ser
 
 ### Command BAN ###
 
-ban.command.usage=<color=red>Wrong arguments. Use <color=yellow>/ban \\<player\\> [-t \\<time\\>|-perma] [-ip|-xip] \\<reason\\><color=red>.
+ban.command.usage=<color=red>Wrong arguments. Use <color=yellow>/ban <player> [-t <time>|-perma] [-ip|-xip] <reason><color=red>.
 ban.command.usage.time=<color=yellow>-t <color=red>must be followed by a time in the format <color=yellow>1s2m3h4d5w6mo7y<color=red>.
 ban.command.usage.time_comb_perma=<color=yellow>-t <color=red>can not be combined with <color=yellow>-perma<color=red>.
 ban.command.usage.ip_comb_xip=<color=yellow>-ip <color=red>can not be combined with <color=yellow>-xip<color=red>.
@@ -64,10 +64,14 @@ ban.error.staff=<color=red>You do not have permissions to ban other staff member
 
 ### Command BanIP ###
 
-banip.command.usage=<color=red>Wrong arguments. Use <color=yellow>/banip \\<player|ip|cidr\\> [-t \\<time\\>] \\<reason\\><color=red>.
+banip.command.usage=<color=red>Wrong arguments. Use <color=yellow>/banip <player|ip|cidr> [-t <time>] <reason><color=red>.
 banip.command.error.invalid_ip=<color=yellow>%s <color=red>is not a valid IP address.
 banip.command.error.invalid_cidr=<color=yellow>%s <color=red>is not a valid CIDR notation.
 banip.command.error.time_too_long=<color=red>Time must be <color=yellow>less than 12 hours<color=red> due to regular ip changes of players.
+
+### Command Unban ###
+
+unban.command.usage=<color=red>Wrong arguments. Use <color=yellow>/unban <player|uuid><color=red>.
 
 
 ### LOGIN ###

@@ -2,6 +2,7 @@ package de.fwatermann.bungeecord.bansystem.translation;
 
 import de.fwatermann.bungeecord.bansystem.BanSystem;
 import de.fwatermann.bungeecord.bansystem.util.FileUtils;
+import de.fwatermann.bungeecord.bansystem.util.Pair;
 
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
@@ -11,10 +12,7 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -24,7 +22,11 @@ public class Translation {
 
     private static final Logger logger = BanSystem.getInstance().getLogger();
     private static final Pattern attributeRegex =
-            Pattern.compile("<((.*?=.*?)(;.*?=.*?)*?)>(.*?)(?=<|$)", Pattern.MULTILINE);
+            Pattern.compile("<(([^<>]+?=[^<>]+?)(;[^<>]+?=[^<>]+?)*)>", Pattern.MULTILINE);
+
+    // <(([^<>]+?=[^<>]+?)(;[^<>]+?=[^<>]+?)*)> - Matches only attribute tags
+    // <((.*?=.*?)(;.*?=.*?)*?)>(.*?)(?=<|$) - Matches all tags
+
     private static final String DEFAULT_LANGKEY = "en_US";
     private static final HashMap<String, Map<String, String>> translations = new HashMap<>();
     private static boolean dataDirInitialized = false;
@@ -76,52 +78,49 @@ public class Translation {
     public static BaseComponent[] component(String messageId, Locale locale, Object... args) {
         String rawText = text(messageId, locale, args);
 
-        // Escape < and > to prevent them from being interpreted as attributes
-        rawText = rawText.replace("\\<", "&lt;").replace("\\>", "&gt;");
-
         Matcher matcher = attributeRegex.matcher(rawText);
 
         ComponentBuilder builder = new ComponentBuilder();
-        boolean any = false;
+        List<Pair<Integer, Integer>> attLocs = new ArrayList<>();
         while (matcher.find()) {
-            String[] attributes = matcher.group(1).split(";");
-            String text = matcher.group(4);
+            attLocs.add(new Pair<>(matcher.start(), matcher.end()));
+        }
 
-            // Unescape < and > to prevent them from being interpreted as attributes
-            text = text.replace("&lt;", "<").replace("&gt;", ">");
+        if (attLocs.isEmpty()) return builder.append(rawText).create();
+
+        for (int i = 0; i < attLocs.size(); i++) {
+            Pair<Integer, Integer> attrLoc = attLocs.get(i);
+            String[] attributes = rawText.substring(attrLoc.a() + 1, attrLoc.b() - 1).split(";");
+            String text =
+                    rawText.substring(
+                            attrLoc.b(),
+                            i + 1 < attLocs.size() ? attLocs.get(i + 1).a() : rawText.length());
 
             builder.append(text);
-            any = true;
-            Arrays.stream(attributes)
-                    .map(s -> s.split("="))
-                    .forEach(
-                            s -> {
-                                switch (s[0]) {
-                                    case "color" -> builder.color(ChatColor.of(s[1]));
-                                    case "bold" -> builder.bold(Boolean.parseBoolean(s[1]));
-                                    case "italic" -> builder.italic(Boolean.parseBoolean(s[1]));
-                                    case "underlined" -> builder.underlined(
-                                            Boolean.parseBoolean(s[1]));
-                                    case "strikethrough" -> builder.strikethrough(
-                                            Boolean.parseBoolean(s[1]));
-                                    case "obfuscated" -> builder.obfuscated(
-                                            Boolean.parseBoolean(s[1]));
-                                    case "insertion" -> builder.insertion(s[1]);
-                                    case "reset" -> {
-                                        builder.reset();
-                                        builder.color(ChatColor.WHITE);
-                                        builder.obfuscated(false);
-                                        builder.underlined(false);
-                                        builder.bold(false);
-                                        builder.italic(false);
-                                        builder.strikethrough(false);
-                                    }
-                                    default -> logger.warning("Unknown attribute " + s[0] + "!");
-                                }
-                            });
-        }
-        if (!any) {
-            builder.append(rawText);
+            for (String s : attributes) {
+                String[] parts = s.split("=");
+                String name = parts[0];
+                String value = parts[1];
+                switch (name) {
+                    case "color", "c" -> builder.color(ChatColor.of(value));
+                    case "bold", "b" -> builder.bold(Boolean.parseBoolean(value));
+                    case "italic", "i" -> builder.italic(Boolean.parseBoolean(value));
+                    case "underlined", "u" -> builder.underlined(Boolean.parseBoolean(value));
+                    case "strikethrough", "s" -> builder.strikethrough(Boolean.parseBoolean(value));
+                    case "obfuscated", "o" -> builder.obfuscated(Boolean.parseBoolean(value));
+                    case "insertion" -> builder.insertion(value);
+                    case "reset" -> {
+                        builder.reset();
+                        builder.color(ChatColor.WHITE);
+                        builder.obfuscated(false);
+                        builder.underlined(false);
+                        builder.bold(false);
+                        builder.italic(false);
+                        builder.strikethrough(false);
+                    }
+                    default -> logger.warning("Unknown attribute \"" + name + "\"!");
+                }
+            }
         }
         return builder.create();
     }
