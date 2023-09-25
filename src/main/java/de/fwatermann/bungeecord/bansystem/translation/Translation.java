@@ -128,11 +128,8 @@ public class Translation {
 
     private static String getTranslation(String messageId, String langKey) {
         if (!dataDirInitialized) {
-            return "Missing translation <"
-                    + messageId
-                    + ">-"
-                    + DEFAULT_LANGKEY
-                    + " (Default file could not be initialized!)";
+            return missingTranslation(
+                    messageId, DEFAULT_LANGKEY, "Default file is not initialized!");
         }
 
         if (!translations.containsKey(langKey)) {
@@ -145,14 +142,13 @@ public class Translation {
                 logger.log(
                         Level.WARNING,
                         "Could not find translation for language key " + langKey + "!");
-                return "Missing translation <" + messageId + ">-" + langKey + "!";
+                return missingTranslation(messageId, langKey);
             }
             return getTranslation(messageId, DEFAULT_LANGKEY);
         }
         return translations
                 .get(langKey)
-                .getOrDefault(
-                        messageId, "Missing translation <" + messageId + ">-" + langKey + "!");
+                .getOrDefault(messageId, missingTranslation(messageId, langKey));
     }
 
     /**
@@ -186,5 +182,10 @@ public class Translation {
     private static String langKey(Locale locale) {
         if (locale == null) return DEFAULT_LANGKEY;
         return locale.getLanguage().toLowerCase() + "_" + locale.getCountry().toUpperCase();
+    }
+
+    private static String missingTranslation(String messageId, String langKey, String... info) {
+        String strInfo = info.length > 0 ? " " + Arrays.toString(info) : "";
+        return String.format("Missing translation %s/%s %s", messageId, langKey, strInfo);
     }
 }
