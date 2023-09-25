@@ -12,6 +12,7 @@ import java.util.Map;
 public class Cache<K, T> {
 
     private final Map<K, CacheEntry<T>> cache = new HashMap<>();
+    private final KeyManipulator<K> defaultKeyManipulator;
     private long expiryTime;
     private int maxEntries;
 
@@ -20,10 +21,22 @@ public class Cache<K, T> {
      *
      * @param expiryTime Time in milliseconds after which the cache entry expires
      * @param maxEntries Maximum number of entries in the cache
+     * @param keyManipulator callback to manipulate the key used for the cache lookup
      */
-    public Cache(long expiryTime, int maxEntries) {
+    public Cache(long expiryTime, int maxEntries, KeyManipulator<K> keyManipulator) {
         this.expiryTime = expiryTime;
         this.maxEntries = maxEntries;
+        this.defaultKeyManipulator = keyManipulator;
+    }
+
+    /**
+     * Create a new Cache object.
+     *
+     * @param expiryTime Time in milliseconds after which the cache entry expires
+     * @param maxEntries Maximum number of entries in the cache
+     */
+    public Cache(long expiryTime, int maxEntries) {
+        this(expiryTime, maxEntries, (key) -> key);
     }
 
     /**
@@ -83,12 +96,17 @@ public class Cache<K, T> {
      * Get a value from the cache. If the value does not exist, the callback is called and the value
      * is added to the cache.
      *
-     * @param key key of the value
+     * @param pKey key of the value
      * @param getCallback callback to get the value if it does not exist
      * @param forceUpdate whether to force an update of the value
      * @return value
      */
-    public T lookup(K key, Callback<T> getCallback, boolean forceUpdate) {
+    public T lookup(
+            K pKey,
+            Callback<T> getCallback,
+            KeyManipulator<K> keyManipulator,
+            boolean forceUpdate) {
+        K key = keyManipulator.manipulate(pKey);
         CacheEntry<T> entry = this.cache.get(key);
         if (entry == null || forceUpdate || entry.expireTime < System.currentTimeMillis()) {
             entry =
@@ -111,10 +129,23 @@ public class Cache<K, T> {
      *
      * @param key key of the value
      * @param getCallback callback to get the value if it does not exist
+     * @param keyManipulator callback to manipulate the key used for the cache lookup
+     * @return value
+     */
+    public T lookup(K key, Callback<T> getCallback, KeyManipulator<K> keyManipulator) {
+        return this.lookup(key, getCallback, keyManipulator, false);
+    }
+
+    /**
+     * Get a value from the cache. If the value does not exist, the callback is called and the value
+     * is added to the cache.
+     *
+     * @param key key of the value
+     * @param getCallback callback to get the value if it does not exist
      * @return value
      */
     public T lookup(K key, Callback<T> getCallback) {
-        return this.lookup(key, getCallback, false);
+        return this.lookup(key, getCallback, this.defaultKeyManipulator, false);
     }
 
     /** Clear the cache. */
@@ -132,17 +163,21 @@ public class Cache<K, T> {
     }
 
     /**
-     * Add a value to the cache.
+     * Put a value to the cache.
      *
      * @param key key of the value
      * @param value value
      */
-    public void add(K key, T value) {
+    public void put(K key, T value) {
         this.cache.put(key, new CacheEntry<>(value, System.currentTimeMillis() + this.expiryTime));
     }
 
     public interface Callback<T> {
         T get();
+    }
+
+    public interface KeyManipulator<K> {
+        K manipulate(K key);
     }
 
     private record CacheEntry<T>(T value, long expireTime) {}
